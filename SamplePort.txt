@@ -1,0 +1,45 @@
+﻿using BusnessLayer;
+using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Drawing;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows.Forms;
+
+namespace SamplePortProject
+{
+    public partial class SamplePort : Form
+    {
+        public SamplePort()
+        {
+            InitializeComponent();
+        }
+
+         void UploadJourneys()
+        {
+            DataTable data = new DataTable();
+            data.Columns.Add("TravelName", typeof(string));
+            data.Columns.Add("Takeof_Time", typeof(DateTime));
+            data.Columns.Add("TravelPrice", typeof(double));
+            data.Columns.Add("Direct", typeof(string));
+            data.Columns.Add("AvailablePlace", typeof(string));
+            DataTable olddata= ClsJorney.GetAllJourneys();
+            foreach (DataRow recordrow in olddata.Rows)
+            {
+                int AvailablePlace = (int)recordrow["PlacesCapacity"] - (int)recordrow["TakedPlaces"];
+                data.Rows.Add(recordrow["TravelName"], recordrow["Takeof_Time"], recordrow["TravelPrice"],
+                    ClsCountry.FindByID((int)recordrow["CountryDirect"]),AvailablePlace);
+            }
+            DGVAllJourney.DataSource = data;
+            
+        }
+
+        private void SamplePort_Load(object sender, EventArgs e)
+        {
+            UploadJourneys();
+        }
+    }
+}
